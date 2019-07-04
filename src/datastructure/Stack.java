@@ -1,19 +1,18 @@
-package data_structure;
+package datastructure;
 
-public class StackGeneric<E> {
+public class Stack {
 
 	private int maxSize;
 	private int top = -1;
 	private int size = 0;
-	E[] stack;
+	int[] stack;
 
-	@SuppressWarnings("unchecked")
-	public StackGeneric(int maxSize) {
+	public Stack(int maxSize) {
 		this.maxSize = maxSize;
-		stack = (E[]) new Object[maxSize];
+		stack = new int[maxSize];
 	}
 
-	public void push(E data) {
+	public void push(int data) {
 		if (isFull()) {
 			System.out.println("Cant push. Stack Overflow");
 		} else {
@@ -22,22 +21,24 @@ public class StackGeneric<E> {
 		}
 	}
 
-	public E pop() throws Exception {
+	public int pop() {
 		if (isEmpty()) {
-			throw new Exception("Cant pop. Stack underflow");
+			System.out.println("Cant pop. Stack underflow");
+			return -1;
 		} else {
-			E data = stack[top--];
+			int data = stack[top--];
 			size--;
 			return data;
 		}
 
 	}
 
-	public E peek() throws Exception {
+	public int peek() {
 		if (isEmpty()) {
-			throw new Exception("Cant peek. Stack is empty");
+			System.out.println("Cant peek. Stack is empty");
+			return -1;
 		} else {
-			E data = stack[top];
+			int data = stack[top];
 			return data;
 		}
 
@@ -66,12 +67,12 @@ public class StackGeneric<E> {
 		}
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 
-		StackGeneric<Integer> stack = new StackGeneric<Integer>(5);
+		Stack stack = new Stack(5);
 
 		// stack underflow
-//		stack.pop();
+		stack.pop();
 
 		// insert
 		stack.push(10);
@@ -96,11 +97,12 @@ public class StackGeneric<E> {
 		// peek
 		System.out.println("Peek: " + stack.peek());
 
+		
 		stack.push(9);
 		stack.push(14);
-
+		
 		// stack overerflow
-//		stack.push(15);
+		stack.push(15);
 
 	}
 

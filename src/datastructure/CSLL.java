@@ -1,55 +1,48 @@
-package data_structure;
+package datastructure;
 
-public class DLL<E> {
+public class CSLL {
 
 	private Node head;
 	private Node tail;
 	private int size;
 
-	private class Node {
-
-		E data;
-		Node next;
-		Node prev;
-
-		public Node(E data) {
-			this.data = data;
-		}
-
-	}
-
-	public void insertAtStart(E data) {
+	public void insertAtStart(int data) {
 
 		Node newNode = new Node(data);
 
-		if (isEmpty()) {
-			head = tail = newNode;
-		} else {
-			newNode.next = head;
-			head.prev = newNode;
+		if (head == null) {
 			head = newNode;
+			tail = newNode;
+			tail.next = head;
+			size++;
+			return;
 		}
+
+		newNode.next = head;
+		head = newNode;
+		tail.next = head;
 		size++;
 	}
 
-	public void insertAtEnd(E data) {
+	public void insertAtEnd(int data) {
 
 		Node newNode = new Node(data);
 
-		if (isEmpty()) {
+		if (head == null) {
 			head = newNode;
 			tail = newNode;
+			tail.next = head;
 			size++;
 			return;
 		}
 
 		tail.next = newNode;
-		newNode.prev = tail;
 		tail = newNode;
+		tail.next = head;
 		size++;
 	}
 
-	public void insertAt(E data, int index) throws Exception {
+	public void insertAt(int data, int index) throws Exception {
 
 		if (index > size) {
 			throw new Exception("Not Valid Index. Max index can be " + size);
@@ -72,35 +65,30 @@ public class DLL<E> {
 			i++;
 		}
 
-		Node nextNode = tempHead.next;
-		newNode.next = nextNode;
-		nextNode.prev = newNode;
-
+		newNode.next = tempHead.next;
 		tempHead.next = newNode;
-		newNode.prev = tempHead;
-
 		size++;
 	}
 
 	public void deleteAtStart() {
 
-		if (isEmpty()) {
+		if (head == null) {
 			System.out.println("Cant delete. List is Empty");
 			return;
 		}
+
 		if (head == tail) {
-			tail = null;
 			head = null;
+			tail = null;
 		} else {
 			head = head.next;
-			head.prev = null;
+			tail.next = head;
 		}
-
 		size--;
 	}
 
 	public void deleteAtEnd() {
-		if (isEmpty()) {
+		if (head == null) {
 			System.out.println("Cant delete. List is Empty");
 			return;
 		}
@@ -108,7 +96,6 @@ public class DLL<E> {
 		if (head == tail) {
 			head = null;
 			tail = null;
-			return;
 		}
 
 		Node tempHead = head;
@@ -118,13 +105,9 @@ public class DLL<E> {
 			i++;
 		}
 
-		Node nextNode = tempHead.next;
-		nextNode.prev = null;
-		nextNode.next = null;
 		tempHead.next = null;
-		nextNode = null;
-
 		tail = tempHead;
+		tail.next = head;
 		size--;
 	}
 
@@ -149,33 +132,22 @@ public class DLL<E> {
 			i++;
 		}
 
-		Node midNode = tempHead.next;
-		Node nextNode = midNode.next;
-
-		midNode.prev = null;
-		midNode.next = null;
-
-		tempHead.next = nextNode;
-		nextNode.prev = tempHead;
-
-		midNode = null;
+		tempHead.next = tempHead.next.next;
 		size--;
 	}
 
-	public E search(E data) {
+	public boolean search(int data) {
 		Node tempHead = head;
 
 		while (tempHead != null) {
 			if (tempHead.data == data)
-				return tempHead.data;
+				return true;
+
+			if (tempHead == tail)
+				break;
+
 			tempHead = tempHead.next;
 		}
-		return null;
-	}
-
-	public boolean isEmpty() {
-		if (head == null)
-			return true;
 		return false;
 	}
 
@@ -184,17 +156,11 @@ public class DLL<E> {
 
 		while (tempHead != null) {
 			System.out.print(tempHead.data + " --> ");
+
+			if (tempHead == tail)
+				break;
+
 			tempHead = tempHead.next;
-		}
-		System.out.println("NULL");
-	}
-
-	public void displayRev() {
-		Node tempHead = tail;
-
-		while (tempHead != null) {
-			System.out.print(tempHead.data + " --> ");
-			tempHead = tempHead.prev;
 		}
 		System.out.println("NULL");
 	}
@@ -205,28 +171,26 @@ public class DLL<E> {
 
 	public static void main(String[] args) throws Exception {
 
-		DLL<Integer> list = new DLL<Integer>();
+		CSLL list = new CSLL();
 
 		System.out.println("INSERTING");
 
 		list.insertAtStart(7);
 		list.insertAtStart(6);
 		list.display();
-		list.displayRev();
+
 		System.out.println("Found 10 : " + list.search(10));
 		System.out.println(list.size());
 
 		list.insertAtEnd(100);
 		list.insertAtEnd(101);
 		list.display();
-		list.displayRev();
 		System.out.println("Found 10 : " + list.search(10));
 		System.out.println(list.size());
 
 		list.insertAt(10, 2);
 		list.insertAt(11, 3);
 		list.display();
-		list.displayRev();
 		System.out.println("Found 10 : " + list.search(10));
 		System.out.println(list.size());
 
@@ -238,19 +202,16 @@ public class DLL<E> {
 
 		list.deleteAtStart();
 		list.display();
-		list.displayRev();
 		System.out.println("Found 101 : " + list.search(101));
 		System.out.println(list.size());
 
 		list.deleteAtEnd();
 		list.display();
-		list.displayRev();
 		System.out.println("Found 101 : " + list.search(101));
 		System.out.println(list.size());
 
 		list.deleteAt(2);
 		list.display();
-		list.displayRev();
 		System.out.println("Found 101 : " + list.search(101));
 		System.out.println(list.size());
 

@@ -1,48 +1,55 @@
-package data_structure;
+package datastructure;
 
-public class CSLL {
+public class DLL<E> {
 
 	private Node head;
 	private Node tail;
 	private int size;
 
-	public void insertAtStart(int data) {
+	private class Node {
+
+		E data;
+		Node next;
+		Node prev;
+
+		public Node(E data) {
+			this.data = data;
+		}
+
+	}
+
+	public void insertAtStart(E data) {
 
 		Node newNode = new Node(data);
 
-		if (head == null) {
+		if (isEmpty()) {
+			head = tail = newNode;
+		} else {
+			newNode.next = head;
+			head.prev = newNode;
 			head = newNode;
-			tail = newNode;
-			tail.next = head;
-			size++;
-			return;
 		}
-
-		newNode.next = head;
-		head = newNode;
-		tail.next = head;
 		size++;
 	}
 
-	public void insertAtEnd(int data) {
+	public void insertAtEnd(E data) {
 
 		Node newNode = new Node(data);
 
-		if (head == null) {
+		if (isEmpty()) {
 			head = newNode;
 			tail = newNode;
-			tail.next = head;
 			size++;
 			return;
 		}
 
 		tail.next = newNode;
+		newNode.prev = tail;
 		tail = newNode;
-		tail.next = head;
 		size++;
 	}
 
-	public void insertAt(int data, int index) throws Exception {
+	public void insertAt(E data, int index) throws Exception {
 
 		if (index > size) {
 			throw new Exception("Not Valid Index. Max index can be " + size);
@@ -65,30 +72,35 @@ public class CSLL {
 			i++;
 		}
 
-		newNode.next = tempHead.next;
+		Node nextNode = tempHead.next;
+		newNode.next = nextNode;
+		nextNode.prev = newNode;
+
 		tempHead.next = newNode;
+		newNode.prev = tempHead;
+
 		size++;
 	}
 
 	public void deleteAtStart() {
 
-		if (head == null) {
+		if (isEmpty()) {
 			System.out.println("Cant delete. List is Empty");
 			return;
 		}
-
 		if (head == tail) {
-			head = null;
 			tail = null;
+			head = null;
 		} else {
 			head = head.next;
-			tail.next = head;
+			head.prev = null;
 		}
+
 		size--;
 	}
 
 	public void deleteAtEnd() {
-		if (head == null) {
+		if (isEmpty()) {
 			System.out.println("Cant delete. List is Empty");
 			return;
 		}
@@ -96,6 +108,7 @@ public class CSLL {
 		if (head == tail) {
 			head = null;
 			tail = null;
+			return;
 		}
 
 		Node tempHead = head;
@@ -105,9 +118,13 @@ public class CSLL {
 			i++;
 		}
 
+		Node nextNode = tempHead.next;
+		nextNode.prev = null;
+		nextNode.next = null;
 		tempHead.next = null;
+		nextNode = null;
+
 		tail = tempHead;
-		tail.next = head;
 		size--;
 	}
 
@@ -132,22 +149,33 @@ public class CSLL {
 			i++;
 		}
 
-		tempHead.next = tempHead.next.next;
+		Node midNode = tempHead.next;
+		Node nextNode = midNode.next;
+
+		midNode.prev = null;
+		midNode.next = null;
+
+		tempHead.next = nextNode;
+		nextNode.prev = tempHead;
+
+		midNode = null;
 		size--;
 	}
 
-	public boolean search(int data) {
+	public E search(E data) {
 		Node tempHead = head;
 
 		while (tempHead != null) {
 			if (tempHead.data == data)
-				return true;
-
-			if (tempHead == tail)
-				break;
-
+				return tempHead.data;
 			tempHead = tempHead.next;
 		}
+		return null;
+	}
+
+	public boolean isEmpty() {
+		if (head == null)
+			return true;
 		return false;
 	}
 
@@ -156,11 +184,17 @@ public class CSLL {
 
 		while (tempHead != null) {
 			System.out.print(tempHead.data + " --> ");
-
-			if (tempHead == tail)
-				break;
-
 			tempHead = tempHead.next;
+		}
+		System.out.println("NULL");
+	}
+
+	public void displayRev() {
+		Node tempHead = tail;
+
+		while (tempHead != null) {
+			System.out.print(tempHead.data + " --> ");
+			tempHead = tempHead.prev;
 		}
 		System.out.println("NULL");
 	}
@@ -171,26 +205,28 @@ public class CSLL {
 
 	public static void main(String[] args) throws Exception {
 
-		CSLL list = new CSLL();
+		DLL<Integer> list = new DLL<Integer>();
 
 		System.out.println("INSERTING");
 
 		list.insertAtStart(7);
 		list.insertAtStart(6);
 		list.display();
-
+		list.displayRev();
 		System.out.println("Found 10 : " + list.search(10));
 		System.out.println(list.size());
 
 		list.insertAtEnd(100);
 		list.insertAtEnd(101);
 		list.display();
+		list.displayRev();
 		System.out.println("Found 10 : " + list.search(10));
 		System.out.println(list.size());
 
 		list.insertAt(10, 2);
 		list.insertAt(11, 3);
 		list.display();
+		list.displayRev();
 		System.out.println("Found 10 : " + list.search(10));
 		System.out.println(list.size());
 
@@ -202,16 +238,19 @@ public class CSLL {
 
 		list.deleteAtStart();
 		list.display();
+		list.displayRev();
 		System.out.println("Found 101 : " + list.search(101));
 		System.out.println(list.size());
 
 		list.deleteAtEnd();
 		list.display();
+		list.displayRev();
 		System.out.println("Found 101 : " + list.search(101));
 		System.out.println(list.size());
 
 		list.deleteAt(2);
 		list.display();
+		list.displayRev();
 		System.out.println("Found 101 : " + list.search(101));
 		System.out.println(list.size());
 

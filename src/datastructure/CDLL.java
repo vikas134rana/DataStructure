@@ -1,40 +1,46 @@
-package data_structure;
+package datastructure;
 
-public class SLL {
+public class CDLL {
 
-	private Node head;
-	private Node tail;
+	private Node1 head;
+	private Node1 tail;
 	private int size;
 
 	public void insertAtStart(int data) {
 
-		Node newNode = new Node(data);
+		Node1 newNode = new Node1(data);
 
 		if (head == null) {
 			head = newNode;
 			tail = newNode;
-			size++;
-			return;
+		} else {
+			newNode.next = head;
+			head.prev = newNode;
+			head = newNode;
 		}
 
-		newNode.next = head;
-		head = newNode;
+		head.prev = tail;
+		tail.next = head;
+
 		size++;
 	}
 
 	public void insertAtEnd(int data) {
 
-		Node newNode = new Node(data);
+		Node1 newNode = new Node1(data);
 
 		if (head == null) {
 			head = newNode;
 			tail = newNode;
-			size++;
-			return;
+		} else {
+			tail.next = newNode;
+			newNode.prev = tail;
+			tail = newNode;
 		}
 
-		tail.next = newNode;
-		tail = newNode;
+		head.prev = tail;
+		tail.next = head;
+
 		size++;
 	}
 
@@ -52,17 +58,22 @@ public class SLL {
 			return;
 		}
 
-		Node newNode = new Node(data);
+		Node1 newNode = new Node1(data);
 
-		Node tempHead = head;
+		Node1 tempHead = head;
 		int i = 1;
 		while (i < index) {
 			tempHead = tempHead.next;
 			i++;
 		}
 
-		newNode.next = tempHead.next;
+		Node1 nextNode = tempHead.next;
+		newNode.next = nextNode;
+		nextNode.prev = newNode;
+
 		tempHead.next = newNode;
+		newNode.prev = tempHead;
+
 		size++;
 	}
 
@@ -74,8 +85,13 @@ public class SLL {
 		}
 		if (head == tail) {
 			tail = null;
+			head = null;
+		} else {
+			head = head.next;
+			head.prev = tail;
+			tail.next = head;
 		}
-		head = head.next;
+
 		size--;
 	}
 
@@ -88,9 +104,11 @@ public class SLL {
 		if (head == tail) {
 			head = null;
 			tail = null;
+			size--;
+			return;
 		}
 
-		Node tempHead = head;
+		Node1 tempHead = head;
 		int i = 1;
 		while (i < size - 1) {
 			tempHead = tempHead.next;
@@ -99,6 +117,10 @@ public class SLL {
 
 		tempHead.next = null;
 		tail = tempHead;
+
+		head.prev = tail;
+		tail.next = head;
+
 		size--;
 	}
 
@@ -116,34 +138,65 @@ public class SLL {
 			return;
 		}
 
-		Node tempHead = head;
+		Node1 tempHead = head;
 		int i = 1;
 		while (i < index) {
 			tempHead = tempHead.next;
 			i++;
 		}
 
-		tempHead.next = tempHead.next.next;
+		Node1 midNode = tempHead.next;
+		Node1 nextNode = midNode.next;
+
+		midNode.prev = null;
+		midNode.next = null;
+
+		tempHead.next = nextNode;
+		nextNode.prev = tempHead;
+
+		midNode = null;
 		size--;
 	}
 
 	public boolean search(int data) {
-		Node tempHead = head;
+		Node1 tempHead = head;
 
 		while (tempHead != null) {
 			if (tempHead.data == data)
 				return true;
+
+			if (tempHead == tail)
+				break;
+
 			tempHead = tempHead.next;
 		}
 		return false;
 	}
 
 	public void display() {
-		Node tempHead = head;
+		Node1 tempHead = head;
 
 		while (tempHead != null) {
 			System.out.print(tempHead.data + " --> ");
+
+			if (tempHead == tail)
+				break;
+
 			tempHead = tempHead.next;
+		}
+		System.out.println("NULL");
+	}
+
+	public void displayRev() {
+		Node1 tempTail = tail;
+
+		while (tempTail != null) {
+			System.out.print(tempTail.data + " --> ");
+
+			if (tempTail == head)
+				break;
+
+			tempTail = tempTail.prev;
 		}
 		System.out.println("NULL");
 	}
@@ -154,25 +207,28 @@ public class SLL {
 
 	public static void main(String[] args) throws Exception {
 
-		SLL list = new SLL();
+		CDLL list = new CDLL();
 
 		System.out.println("INSERTING");
 
 		list.insertAtStart(7);
 		list.insertAtStart(6);
 		list.display();
+		list.displayRev();
 		System.out.println("Found 10 : " + list.search(10));
 		System.out.println(list.size());
 
 		list.insertAtEnd(100);
 		list.insertAtEnd(101);
 		list.display();
+		list.displayRev();
 		System.out.println("Found 10 : " + list.search(10));
 		System.out.println(list.size());
 
 		list.insertAt(10, 2);
 		list.insertAt(11, 3);
 		list.display();
+		list.displayRev();
 		System.out.println("Found 10 : " + list.search(10));
 		System.out.println(list.size());
 
@@ -184,16 +240,19 @@ public class SLL {
 
 		list.deleteAtStart();
 		list.display();
+		list.displayRev();
 		System.out.println("Found 101 : " + list.search(101));
 		System.out.println(list.size());
 
 		list.deleteAtEnd();
 		list.display();
+		list.displayRev();
 		System.out.println("Found 101 : " + list.search(101));
 		System.out.println(list.size());
 
 		list.deleteAt(2);
 		list.display();
+		list.displayRev();
 		System.out.println("Found 101 : " + list.search(101));
 		System.out.println(list.size());
 

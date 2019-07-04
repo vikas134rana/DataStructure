@@ -1,6 +1,6 @@
 package sorting;
 
-import data_structure.BinaryHeap;
+import datastructure.BinaryHeap;
 
 public class HeapSort {
 
